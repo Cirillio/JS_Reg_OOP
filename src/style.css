@@ -1,0 +1,58 @@
+@import "tailwindcss";
+@layer base {
+  .form-container {
+    @apply px-20 flex w-full flex-col gap-4 items-start justify-center;
+  }
+
+  .form-label {
+    @apply flex flex-col text-xl w-full relative;
+  }
+
+  .form-label-text {
+    @apply relative w-fit inline-block pr-6 text-neutral-700;
+  }
+
+  .form-input {
+    @apply rounded-lg border border-neutral-300 bg-neutral-50 p-2 transition-all focus:outline-0 hover:border-neutral-400 focus:border-neutral-600 focus:bg-white;
+  }
+
+  .form-button {
+    @apply bg-cyan-700 hover:bg-indigo-500 text-white mx-auto text-xl font-semibold py-2 px-6 cursor-pointer rounded-full disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-cyan-700 transition-all duration-200;
+  }
+
+  .form-input {
+    @apply text-lg rounded-lg border border-neutral-300 bg-neutral-50 p-2 transition-all focus:outline-0 hover:border-neutral-400 focus:border-cyan-700  focus:bg-white;
+  }
+
+  .invalid {
+    @apply bg-red-100 text-red-900 border-red-500 hover:border-red-500 focus:border-red-500;
+  }
+
+  .valid {
+    @apply border-green-500 hover:border-green-500 focus:border-green-500;
+  }
+}
+
+.form-label-text::after {
+  content: "✓";
+  position: absolute;
+  top: 50%;
+  right: 0;
+  font-size: 14px;
+  color: white;
+  transform: translateY(-50%);
+  aspect-ratio: 1/1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3px;
+  border-radius: 50%;
+  line-height: 14px;
+  background-color: rgb(6, 106, 29);
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+}
+
+.form-label:has(input.valid) .form-label-text::after {
+  opacity: 1;
+}
