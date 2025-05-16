@@ -37,6 +37,7 @@ export class Input {
     this.label = label;
     this.form_field = form_field;
 
+    // СОБЫТИЕ ПРИ ВВОДЕ - УСТАНОВКА ЗНАЧЕНИЯ (+ВАЛИДАЦИЯ) И ВЫЗОВ ВСЕХ КОЛЛБЕКОВ (ПОДПИСЧИКОВ), НАПРИМЕР ИЗВНЕ ИНПУТА МЕТОДЫ ФОРМЫ (ТУГЛ КНОПКИ)
     this.input.oninput = (e) => {
       this.setValue(e.target.value);
       this.notify();
@@ -75,16 +76,18 @@ export class Input {
       // валидатор должен вернуть нулл в случае успеха, иначе сообщение об ошибке
       this.toggleValid(validation);
     });
-    console.log(this.name, this.value, this.error, this.valid);
   }
 
+  // ПОДПИСКА НА СОБЫТИЕ
   onChange(callback) {
     this.listeners.push(callback);
   }
 
+  // ОТПРАВКА СОБЫТИЙ
   notify() {
     this.listeners.forEach((cb) =>
       cb({
+        // вообще можно убрать т.к. у меня пока только для кнопки коллбеки, а кнопке не нужны эти аргументы
         value: this.value,
         error: this.error,
         valid: this.valid,

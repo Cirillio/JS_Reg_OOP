@@ -2,7 +2,7 @@ import { Input } from "./registrator/input";
 import { Form } from "./registrator/form";
 
 document.addEventListener("DOMContentLoaded", () => {
-  console.log("load");
+  // регулярки мне иишка сделала
   const validators = {
     name: (value) => {
       const valid = /^[A-Za-zА-Яа-яёЁ'\\-]{2,40}$/.test(value.trim());

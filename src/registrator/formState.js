@@ -1,5 +1,6 @@
 import { Input as _Input } from "./input";
 
+// Хранилище состояния для формы
 export class FormState {
   constructor() {
     this.inputs = {};
@@ -29,9 +30,7 @@ export class FormState {
 
   formValid() {
     // прохожусь по значениями объекта (т.е. по экземплярам инпутов)
-    const valid = Object.values(this.inputs).every((i) => i.getValid());
-    console.log(valid);
-    return valid;
+    return Object.values(this.inputs).every((i) => i.getValid());
   }
 
   validateInput(name) {

@@ -1,12 +1,21 @@
 import { Input as _Input } from "./input";
 import { FormState } from "./formState";
+import { FormAlert } from "./formAlert";
 
 export class Form {
   constructor(inputs = []) {
+    // хранилище для формы
     this.state = new FormState();
     this.inputs = inputs;
     this.validaty = null;
     this.form_data = {};
+    this.alert = new FormAlert(
+      ".result-container",
+      ".result-loading",
+      ".result-error",
+      ".result-response",
+      ".result-close"
+    );
 
     this.init();
     this.initFormChange();
@@ -34,6 +43,7 @@ export class Form {
     if (!this.inputs.every((i) => i instanceof _Input)) {
       throw new Error("Input must be an instance of the Input class");
     }
+    // регистрация инпутов и подпись событий
     this.inputs.forEach((input) => {
       this.state.registerInput(input);
       this.state.onChangeInput(input.name, () => {
@@ -41,11 +51,13 @@ export class Form {
         this.toggleFormButton(valid);
       });
     });
+    // доп проверка пароля
     this.state.onChangeInput("Password", () => {
       this.state.validateInput("Password confirm");
     });
   }
 
+  // рендер в нужном месте
   render(elem) {
     const el = document.querySelector(elem);
     el.appendChild(this.form);
@@ -57,15 +69,22 @@ export class Form {
     }
   }
 
+  // метод отправки при клике и открытие окна с результатами
   async onSubmit() {
     try {
       this.makeResult();
       this.checkResult();
+      this.alert.openAlert();
       await this.sendResult()
-        .then((data) => console.log(data))
-        .catch((error) => console.log(error));
+        .then((data) =>
+          this.alert.setResponse(
+            data.status === 200 ? "Registered successfully" : data.status
+          )
+        )
+        .catch((error) => this.alert.setError(error.message));
     } catch (error) {
-      console.log(error);
+      this.alert.openAlert();
+      this.alert.setError(error.message);
     }
   }
 
@@ -75,6 +94,7 @@ export class Form {
     this.form_data = this.state.getFormValues();
   }
 
+  // отправка результата
   async sendResult(method = "post", url = "https://httpbin.org") {
     return fetch(url + "/" + method, {
       method: method.toUpperCase(),

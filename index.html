@@ -15,22 +15,27 @@
           Registration
         </h1>
         <div class="w-full h-[1px] bg-neutral-300"></div>
-        <div class="form-outer border relative">
+        <div class="form-outer relative">
           <div
-            class="result-container absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-neutral-100 shadow-sm shadow-neutral-500/40 rounded-xl flex min-w-60 min-h-40 flex-col items-center p-4 z-20 transition-all duration-200"
+            class="result-container hidden absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-neutral-100 shadow-sm shadow-neutral-500/40 rounded-xl w-60 min-h-40 flex-col items-center p-4 z-20 transition-all duration-200"
           >
-            <div class="result flex-1 h-full flex w-full border relative">
+            <div class="result flex-1 h-full flex w-full relative">
               <p
-                class="result-loading result-inner result-hidden font-light italic text-xl select-none z-50"
+                class="result-loading result-inner font-light italic text-xl select-none z-50"
               >
                 loading...
               </p>
               <p
-                class="result-content result-inner border w-full h-full z-30"
+                class="result-response text-green-600 font-semibold text-xl result-inner z-30"
               ></p>
               <p
-                class="result-error result-inner border w-full h-full z-40"
+                class="result-error text-red-500 font-bold text-lg result-inner z-40"
               ></p>
+              <button
+                class="result-close bg-neutral-50 px-3 py-2 rounded-lg shadow-sm shadow-neutral-500/50 font-semibold hover:bg-neutral-300 active:bg-neutral-300 transition-all duration-200 cursor-pointer absolute top-full mt-6 left-1/2 -translate-x-1/2"
+              >
+                Ok
+              </button>
             </div>
           </div>
         </div>

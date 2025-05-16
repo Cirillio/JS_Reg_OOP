@@ -37,7 +37,7 @@
   }
 
   .result-inner {
-    @apply opacity-100 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 absolute transition-all duration-200;
+    @apply w-full h-full flex items-center justify-center opacity-100 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 absolute transition-all duration-200;
   }
 
   .result-hidden {
