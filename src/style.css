@@ -1,43 +1,88 @@
 @import "tailwindcss";
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+
 @layer base {
+  .horizontal-divider {
+    @apply w-full h-[1px] bg-neutral-300 dark:bg-neutral-600;
+  }
+
   .form {
-    @apply lg:px-20 sm:px-10 px-4 flex w-full flex-col gap-5 items-start justify-center;
+    @apply flex w-full flex-col gap-2 items-start justify-center;
   }
 
   .form-field {
-    @apply flex flex-col text-xl w-full relative;
+    @apply px-4 flex flex-col w-full relative;
   }
 
   .form-label {
-    @apply relative w-fit inline-block pr-6 text-neutral-700;
-  }
-
-  .form-input {
-    @apply rounded-lg border border-neutral-300 bg-neutral-50 p-2 transition-all focus:outline-0 hover:border-neutral-400 focus:border-neutral-600 focus:bg-white;
+    @apply font-medium text-sm text-neutral-700 dark:text-neutral-100;
   }
 
   .form-button {
-    @apply bg-cyan-700 hover:bg-indigo-500 text-white mx-auto text-xl font-semibold py-2 px-6 cursor-pointer rounded-full disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-cyan-700 transition-all duration-200;
+    @apply mx-4 bg-neutral-200 text-neutral-700 dark:bg-neutral-700 dark:text-neutral-200
+         hover:bg-cyan-700 hover:text-white
+         dark:hover:bg-cyan-600 dark:hover:text-white
+         focus:outline-cyan-700 focus:border-0 focus:ring-2 focus:ring-cyan-700 focus:outline-none
+         shadow-sm shadow-neutral-400 dark:shadow-black/40
+         text-lg font-semibold py-1 px-3 cursor-pointer rounded-xl
+         disabled:opacity-50 disabled:cursor-not-allowed
+         disabled:hover:bg-neutral-200 disabled:hover:text-neutral-600
+         dark:disabled:hover:bg-neutral-700 dark:disabled:hover:text-neutral-400
+         transition-all duration-200;
+  }
+
+  .form-input-container {
+    @apply relative w-full;
   }
 
   .form-input {
-    @apply text-lg rounded-lg border border-neutral-300 bg-neutral-50 p-2 transition-all focus:outline-0 hover:border-neutral-400 focus:border-cyan-700  focus:bg-white;
+    @apply rounded-lg w-full text-sm border border-neutral-200 bg-neutral-50
+         dark:border-neutral-500 dark:bg-neutral-800
+         text-neutral-800 dark:text-neutral-100
+         placeholder-neutral-400 dark:placeholder-neutral-500
+         p-2 pr-8 transition-all focus:outline-0
+         hover:border-neutral-400 focus:border-cyan-700
+         dark:hover:border-neutral-400 dark:focus:border-cyan-500
+         focus:bg-white dark:focus:bg-neutral-900;
   }
 
+  .form-input-clear {
+    @apply absolute bottom-full right-0 text-xs mb-[2px] opacity-0 hover:text-cyan-700
+         cursor-pointer text-neutral-400 dark:text-neutral-500;
+  }
+
+  .form-input-desc {
+    @apply text-xs text-neutral-300 dark:text-neutral-500;
+  }
+  .error-list {
+    @apply flex flex-col gap-0 list-disc ml-4;
+  }
+
+  .error-item {
+    @apply text-xs text-red-800 dark:text-red-400;
+  }
   .invalid {
-    @apply bg-red-100 text-red-900 border-red-500 hover:border-red-500 focus:border-red-500;
+    @apply bg-red-100 text-red-900 border-red-500 
+         hover:border-red-500 focus:border-red-500 
+         dark:bg-red-900/20 dark:text-red-300 dark:border-red-400;
   }
 
   .valid {
-    @apply border-green-500 hover:border-green-500 focus:border-green-500;
+    @apply border-green-500 hover:border-green-500 focus:border-green-500 
+         dark:border-green-400 dark:hover:border-green-400 dark:focus:border-green-400;
   }
 
   .form-input-tooltip-error {
-    @apply opacity-0 text-sm text-red-900 bg-red-500/20 p-1 rounded-lg w-full  absolute right-1/2 translate-x-1/2 bottom-0 translate-y-4/5 transition-all duration-100;
+    @apply opacity-0 text-sm text-red-900 bg-red-500/20 
+         dark:text-red-200 dark:bg-red-900/40 
+         p-1 rounded-lg w-full absolute right-1/2 translate-x-1/2 
+         bottom-0 translate-y-4/5 transition-all duration-100;
   }
 
   .result-inner {
-    @apply w-full h-full flex items-center justify-center opacity-100 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 absolute transition-all duration-200;
+    @apply w-full h-full flex items-center justify-center opacity-100 
+         top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 
+         absolute transition-all duration-200;
   }
 
   .result-hidden {
@@ -45,26 +90,45 @@
   }
 }
 
-.form-label::after {
-  content: "✓";
+.form-input:focus + .form-input-clear {
+  @apply opacity-100;
+}
+
+.form-input-clear:focus {
+  @apply opacity-100 outline-0 text-cyan-700;
+}
+
+.form-input-container::after {
+  content: "";
   position: absolute;
+  width: 20px;
+  height: 20px;
+
   top: 50%;
-  right: 0;
-  font-size: 14px;
-  color: white;
-  transform: translateY(-50%);
-  aspect-ratio: 1/1;
+  right: 10px;
+  translate: 0 -50%;
+  z-index: 9999;
+  font-size: 16px;
+  font-weight: 600;
+
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 3px;
   border-radius: 50%;
-  line-height: 14px;
-  background-color: rgb(6, 106, 29);
+  line-height: 16px;
   opacity: 0;
   transition: opacity 0.2s ease-in-out;
 }
 
-.form-field:has(input.valid) .form-label::after {
+.form-field:has(input.valid) .form-input-container::after {
+  content: "✓";
   opacity: 1;
+  color: var(--color-green-500);
+}
+
+.form-field:has(input.invalid) .form-input-container::after {
+  content: "✗";
+  opacity: 1;
+  font-size: 14px;
+  color: var(--color-red-600);
 }

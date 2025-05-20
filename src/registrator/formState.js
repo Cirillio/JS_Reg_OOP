@@ -34,11 +34,11 @@ export class FormState {
   }
 
   validateInput(name) {
-    this.inputs[name].validate();
+    this.inputs[name].handleValidate();
   }
 
   validateForm() {
-    Object.values(this.inputs).forEach((i) => i.validate());
+    Object.values(this.inputs).forEach((i) => i.handleValidate());
   }
 
   onChangeInput(name, callback) {

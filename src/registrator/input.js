@@ -1,5 +1,7 @@
+import { ErrorList } from "./errorList";
+
 export class Input {
-  constructor(name, type, placeholder = "", validators = []) {
+  constructor({ name, type, placeholder = "", desc, validators = [] }) {
     this.name = name;
     this.id =
       name.split(" ").length > 1
@@ -7,8 +9,9 @@ export class Input {
         : name.toLowerCase();
     this.type = type;
     this.placeholder = placeholder;
+    this.desc = desc;
     this.value = null;
-    this.error = null;
+    this.errors = new ErrorList();
     this.valid = false;
     this.validators = validators;
     this.listeners = [];
@@ -23,8 +26,6 @@ export class Input {
     label.classList.add("form-label");
     label.textContent = this.name;
 
-    form_field.appendChild(label);
-
     const input = document.createElement("input");
     input.classList.add("form-input");
     input.setAttribute("type", this.type);
@@ -32,9 +33,39 @@ export class Input {
     input.setAttribute("id", this.id);
     input.setAttribute("placeholder", this.placeholder);
 
-    form_field.appendChild(input);
+    switch (this.type) {
+      case "password":
+        input.setAttribute("autocomplete", "new-password");
+        break;
+      case "email":
+        input.setAttribute("autocomplete", "username");
+        break;
+    }
+
+    const input_container = document.createElement("div");
+    input_container.classList.add("form-input-container");
+    input_container.appendChild(input);
+
+    const input_clear = document.createElement("button");
+    input_clear.classList.add("form-input-clear");
+    input_clear.textContent = "Clear";
+    input_clear.onclick = () => this.clearInput();
+    input_container.appendChild(input_clear);
+
+    const desc = document.createElement("span");
+    desc.classList.add("form-input-desc");
+    desc.textContent = this.desc;
+
+    const error_list = this.errors.getElement();
+
+    form_field.appendChild(label);
+    form_field.appendChild(input_container);
+    form_field.appendChild(desc);
+    form_field.appendChild(error_list);
+
     this.input = input;
     this.label = label;
+
     this.form_field = form_field;
 
     // СОБЫТИЕ ПРИ ВВОДЕ - УСТАНОВКА ЗНАЧЕНИЯ (+ВАЛИДАЦИЯ) И ВЫЗОВ ВСЕХ КОЛЛБЕКОВ (ПОДПИСЧИКОВ), НАПРИМЕР ИЗВНЕ ИНПУТА МЕТОДЫ ФОРМЫ (ТУГЛ КНОПКИ)
@@ -48,6 +79,11 @@ export class Input {
     return this.input;
   }
 
+  clearInput() {
+    this.setValue("");
+    this.input.focus();
+  }
+
   getLabeledInput() {
     return this.label;
   }
@@ -55,7 +91,7 @@ export class Input {
   setValue(value) {
     this.value = value;
     this.input.value = value;
-    this.validate();
+    this.handleValidate();
   }
 
   getValue() {
@@ -66,15 +102,22 @@ export class Input {
     return this.valid;
   }
 
-  getError() {
-    return this.error;
+  handleValidate() {
+    this.errors.clearErrors();
+    this.validate();
+    this.toggleValid(this.errors.checkErrors());
+    this.errors.showErrors();
   }
 
   validate() {
     this.validators.forEach((validator) => {
-      const validation = validator(this.value);
-      // валидатор должен вернуть нулл в случае успеха, иначе сообщение об ошибке
-      this.toggleValid(validation);
+      // валидатор выбрасывает ошибку если она есть
+      try {
+        validator(this.value);
+      } catch (error) {
+        // console.log(error.msg);
+        this.errors.addError(error);
+      }
     });
   }
 
@@ -89,23 +132,25 @@ export class Input {
       cb({
         // вообще можно убрать т.к. у меня пока только для кнопки коллбеки, а кнопке не нужны эти аргументы
         value: this.value,
-        error: this.error,
+        errors: this.errors.getErrors(),
         valid: this.valid,
       })
     );
   }
 
-  toggleValid(validation) {
-    this.error = validation;
-    this.valid = this.error ? false : true;
-    this.valid ? this.setValidClass() : this.setInvalidClass();
+  toggleValid(valid) {
+    if (typeof valid !== "boolean") return;
+    this.valid = valid;
+    valid ? this.setValidClass() : this.setInvalidClass();
   }
 
   setValidClass() {
     this.input.classList.remove("invalid");
+    this.input.classList.add("valid");
   }
 
   setInvalidClass() {
     this.input.classList.add("invalid");
+    this.input.classList.remove("valid");
   }
 }

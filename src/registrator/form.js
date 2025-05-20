@@ -26,6 +26,13 @@ export class Form {
     form.classList.add("form");
     form.onsubmit = (e) => e.preventDefault();
 
+    if (this.inputs.length === 0) {
+      form.appendChild(
+        (document.createElement("p").textContent = "You didn't add any inputs")
+      );
+      return;
+    }
+
     this.inputs.forEach((i) => form.appendChild(i.form_field));
 
     const submit_btn = document.createElement("button");
@@ -34,6 +41,10 @@ export class Form {
     submit_btn.textContent = "Send";
     this.submit_btn = submit_btn;
     this.submit_btn.onclick = () => this.onSubmit();
+
+    const h_divider = document.createElement("div");
+    h_divider.classList.add("horizontal-divider");
+    form.appendChild(h_divider);
 
     form.appendChild(submit_btn);
     this.form = form;

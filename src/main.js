@@ -1,58 +1,87 @@
+import { Theme } from "./theme";
 import { Input } from "./registrator/input";
 import { Form } from "./registrator/form";
+import { validators } from "./registrator/validators";
 
 document.addEventListener("DOMContentLoaded", () => {
-  // регулярки мне иишка сделала
-  const validators = {
-    name: (value) => {
-      const valid = /^[A-Za-zА-Яа-яёЁ'\\-]{2,40}$/.test(value.trim());
-      if (!valid) return "Only letters, hyphens and apostrophes are allowed";
-      return null;
-    },
-    email: (value) => {
-      const valid = /^\S+@\S+\.\S+$/.test(value.trim());
-      return valid ? null : "Incorrect email";
-    },
+  new Theme("theme-toggle", "icon-light", "icon-dark");
 
-    pass: (value) => {
-      if (value.length < 8) return "At least 8 characters";
-      if (!/[a-z]/.test(value)) return "At least one lowercase letter";
-      if (!/[A-Z]/.test(value)) return "At least one uppercase letter";
-      if (!/[0-9]/.test(value)) return "At least one digit";
-      if (!/[^a-zA-Z0-9]/.test(value)) return "At least one special character";
-      return null;
-    },
+  const name_validators = [
+    validators.name_spec_symbols,
+    validators.name_symbols,
+    validators.length(1, 40),
+  ];
 
-    matchPass: (getPasswordValue) => (value) => {
-      return value === getPasswordValue() ? null : "Passwords do not match";
-    },
+  const email_validators = [
+    validators.length(),
+    validators.email,
+    validators.email_structure,
+    validators.email_local_symbols,
+    validators.email_local_spec_symbols,
+    validators.email_local_spec_borders,
+    validators.email_domain_symbols,
+  ];
 
-    age: (value) => {
-      if (!value) return "Required";
-      const birthDate = new Date(value);
-      const now = new Date();
-      const age = now.getFullYear() - birthDate.getFullYear();
-      const isOldEnough =
-        age > 18 ||
-        (age === 18 &&
-          (now.getMonth() > birthDate.getMonth() ||
-            (now.getMonth() === birthDate.getMonth() &&
-              now.getDate() >= birthDate.getDate())));
-      const isYearValid = birthDate.getFullYear() >= 1901;
-      if (!isYearValid) return "Year must be 1901 or later";
-      return isOldEnough ? null : "You must be at least 18 years old";
-    },
-  };
+  const pass_validators = [
+    validators.pass_digits,
+    validators.pass_cases,
+    validators.pass_symbols,
+    validators.length(8),
+  ];
+
+  const match_pass_validators = [
+    validators.length(8),
+    validators.matchPass(() => form.inputs[3].getValue()),
+  ];
+
+  const age_validators = [
+    validators.length(),
+    validators.year_valid,
+    validators.old_enough,
+  ];
 
   const form = new Form([
-    new Input("First name", "text", "Your name is...", [validators.name]),
-    new Input("Last name", "text", "Enter your last name", [validators.name]),
-    new Input("Email", "email", "Enter your email", [validators.email]),
-    new Input("Password", "password", "Enter your password", [validators.pass]),
-    new Input("Password confirm", "password", "Repeat your password", [
-      validators.matchPass(() => form.inputs[3].getValue()),
-    ]),
-    new Input("Birth day", "date", "When were you born?", [validators.age]),
+    new Input({
+      name: "First name",
+      type: "text",
+      placeholder: "Your name is...",
+      validators: name_validators,
+      // оставил 40, тк погуглил и в среднем русские имена, фамилии длинною около 30 +-
+    }),
+    new Input({
+      name: "Last name",
+      type: "text",
+      placeholder: "Enter your last name",
+      validators: name_validators,
+    }),
+    new Input({
+      name: "Email",
+      type: "email",
+      placeholder: "Enter your email",
+      validators: email_validators,
+    }),
+    new Input({
+      name: "Password",
+      type: "password",
+      placeholder: "Enter your password",
+      desc: "Your password must be strong enough",
+      validators: pass_validators,
+    }),
+    new Input({
+      name: "Password confirm",
+      type: "password",
+      placeholder: "Repeat your password",
+      validators: match_pass_validators,
+    }),
+    new Input({
+      name: "Birth day",
+      type: "date",
+      placeholder: "When were you born?",
+      desc: "You must be at least 18 years old",
+      validators: age_validators,
+    }),
+    // Иконка календаря криво из-за паддинга справа, который ограничивает текст до иконки ✓/✗
+    // такую конечно надо кастомную делать
   ]);
 
   form.render(".form-outer");
