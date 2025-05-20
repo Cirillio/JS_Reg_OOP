@@ -1,5 +1,0 @@
-npm i
-npm run dev
-
-https://github.com/Cirillio/JS_Reg_OOP
-https://cirillio.github.io/JS_Reg_OOP/
