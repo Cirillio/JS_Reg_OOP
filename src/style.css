@@ -15,7 +15,7 @@
   }
 
   .form-label {
-    @apply font-medium text-sm text-neutral-700 dark:text-neutral-100;
+    @apply font-medium text-sm text-neutral-700 dark:text-neutral-100 w-fit;
   }
 
   .form-button {
@@ -46,14 +46,23 @@
          focus:bg-white dark:focus:bg-neutral-900;
   }
 
+  .form-input-addittional {
+    @apply absolute bottom-full right-0 text-xs mb-[2px] flex items-center gap-1;
+  }
+
   .form-input-clear {
-    @apply absolute bottom-full right-0 text-xs mb-[2px] opacity-0 hover:text-cyan-700
+    @apply text-xs  opacity-0 hover:text-cyan-700
          cursor-pointer text-neutral-400 dark:text-neutral-500;
+  }
+
+  .form-pass-toggle {
+    @apply cursor-pointer text-sm text-center flex items-center justify-center;
   }
 
   .form-input-desc {
     @apply text-xs text-neutral-300 dark:text-neutral-500;
   }
+
   .error-list {
     @apply flex flex-col gap-0 list-disc ml-4;
   }
@@ -90,7 +99,7 @@
   }
 }
 
-.form-input:focus + .form-input-clear {
+.form-input:focus + .form-input-addittional > .form-input-clear {
   @apply opacity-100;
 }
 

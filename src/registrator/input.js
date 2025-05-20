@@ -46,21 +46,39 @@ export class Input {
     input_container.classList.add("form-input-container");
     input_container.appendChild(input);
 
+    const input_add = document.createElement("div");
+    input_add.classList.add("form-input-addittional");
+
     const input_clear = document.createElement("button");
     input_clear.classList.add("form-input-clear");
     input_clear.textContent = "Clear";
     input_clear.onclick = () => this.clearInput();
-    input_container.appendChild(input_clear);
+    input_add.appendChild(input_clear);
 
-    const desc = document.createElement("span");
-    desc.classList.add("form-input-desc");
-    desc.textContent = this.desc;
+    let toggle_pass = null;
+    if (this.type === "password") {
+      toggle_pass = document.createElement("button");
+      toggle_pass.classList.add("form-pass-toggle");
+      toggle_pass.textContent = "👁️";
+      toggle_pass.onclick = () => this.togglePass();
+      this.toggle_pass = toggle_pass;
+      input_add.appendChild(toggle_pass);
+    }
+
+    input_container.appendChild(input_add);
+
+    let desc = null;
+    if (this.desc) {
+      desc = document.createElement("span");
+      desc.classList.add("form-input-desc");
+      desc.textContent = this.desc;
+    }
 
     const error_list = this.errors.getElement();
 
     form_field.appendChild(label);
     form_field.appendChild(input_container);
-    form_field.appendChild(desc);
+    if (this.desc) form_field.appendChild(desc);
     form_field.appendChild(error_list);
 
     this.input = input;
@@ -81,6 +99,18 @@ export class Input {
 
   clearInput() {
     this.setValue("");
+    this.input.focus();
+  }
+
+  togglePass() {
+    console.log(this.input.type);
+    if (this.input.type === "password") {
+      this.input.type = "text";
+      this.toggle_pass.textContent = "🙈";
+    } else {
+      this.input.type = "password";
+      this.toggle_pass.textContent = "👁️";
+    }
     this.input.focus();
   }
 
